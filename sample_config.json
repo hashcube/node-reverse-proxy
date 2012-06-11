@@ -1,0 +1,22 @@
+{
+  "SSL_PRIVATE_KEY" : "/path/to/your/ssl/private/key",
+  "SSL_CERT" : "/path/to/your/ssl/certificate",
+
+  "backends" : {
+    "default_backend": {
+      "host": "hostname",
+      "port": "port no, as number not string"
+    },
+    "some_other_backend": {
+      "host": "hostname",
+      "port": "port no, as number",
+      "https": "true | false"
+    }
+  },
+
+  "router" : {
+    "/some_url/" : "one_of_the_backends"
+  },            
+
+  "onUpgrade": "one_of_the_backends"
+}
