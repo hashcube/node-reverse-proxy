@@ -5,9 +5,20 @@ var https = require('https');
 //var conf = require('./conf.js');
 var url = require('url');
 
-var config_file = __dirname + "/config.json";
+var config_file = "/etc/hc-rproxy/config.json";
+var config;
 
-var config = JSON.parse(fs.readFileSync(config_file, 'utf-8'));
+try {
+  config = JSON.parse(fs.readFileSync(config_file, 'utf-8'));
+} catch(err) {
+  if(err.errno == 34) {
+    console.error("FATAL ERROR: Can't find config file ", config_file);
+    process.exit(1);
+  }
+  else {
+    console.error(err);
+  }
+}
 
 var backends = {};
 var secure_server = false;
