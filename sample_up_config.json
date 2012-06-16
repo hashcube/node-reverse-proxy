@@ -1,0 +1,5 @@
+{
+  "SSL_PRIVATE_KEY" : "/path/to/ssl/key"
+  , "SSL_CERT" : "/path/to/ssl/cert"
+  , "ports" : [80, 443]
+}

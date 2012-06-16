@@ -1,46 +1,28 @@
-var fs = require('fs');
-var httpProxy = require('http-proxy');
-var http = require('http');
-var https = require('https');
-//var conf = require('./conf.js');
-var url = require('url');
+var fs = require('fs')
+, httpProxy = require('http-proxy')
+, http = require('http')
+, url = require('url')
+, Config = require('./utils');
 
-var config_file = "/etc/hc-rproxy/config.json";
-var config;
 
-try {
-  config = JSON.parse(fs.readFileSync(config_file, 'utf-8'));
-} catch(err) {
-  if(err.errno == 34) {
-    console.error("FATAL ERROR: Can't find config file ", config_file);
-    process.exit(1);
-  }
-  else {
-    console.error(err);
-  }
-}
-
+var config_file = "/Users/emacsian/work/hashcube/tools/rproxy/config.json";
 var backends = {};
-var secure_server = false;
+var config = new Config().get(config_file);
+var server = http.createServer();
 
-var https_options = {
-  key: fs.readFileSync(config.SSL_PRIVATE_KEY, 'utf8'),
-  cert: fs.readFileSync(config.SSL_CERT, 'utf8')
-};
+/* Load and parse Config file */
+function loadConfig() {
 
-// Parsing and setting up backends from the config file
-for(i in config.backends) {
-  var target = {};
-  target.host = config.backends[i].host;
-  target.port = config.backends[i].port;
-  if(config.backends[i].https) {
-    target.https = config.backends[i].https;
-    secure_server = config.backends[i];
+  // Parsing and setting up backends from the config file
+  for(i in config.backends) {
+    var target = {};
+    target.host = config.backends[i].host;
+    target.port = config.backends[i].port;
+    backends[i] = new httpProxy.HttpProxy({target: target});
   }
-  backends[i] = new httpProxy.HttpProxy({target: target}); 
 }
 
-// Setup the rules for backends from config file
+/* Setup proxy rules for backends from config file */
 var setupServer = function (server) {
   server.on('request', function(req, res) {
     var matched = false;
@@ -56,19 +38,12 @@ var setupServer = function (server) {
     if(!matched) {
       console.log(req.headers);
       console.log(req.url);
-      //TODO:  find out a way to find out the protocol
-      // referer doesnt work
-      /*if(url.parse(req.headers.referer).protocol === 'https:' && secure_server) {
-        console.log(req.url, ' proxying to ', secure_server);
-        backends.secure_server.proxyRequest(req, res);
-      }
-      else {*/
-        console.log(req.url, ' proxying to default backend');
-        backends.default_backend.proxyRequest(req, res);
-      //}
+      console.log(req.url, ' proxying to default backend');
+      console.log('x-forwarded',req.headers['x-forwarded-proto']);
+      backends.default_backend.proxyRequest(req, res);
     }
   });
-  
+
   server.on('upgrade', function(req, socket, head) {
     console.log('UPGRADING HEADER FOUND!');
     console.log(req.headers);
@@ -77,14 +52,7 @@ var setupServer = function (server) {
   });
 };
 
-var server = http.createServer();
-var https_server = https.createServer(https_options);
+loadConfig();
 setupServer(server);
-setupServer(https_server);
 
-server.listen(80);
-https_server.listen(443);
-
-console.log('Ready to proxy requests. Listening on port 80...');
-console.log('Ready to proxy requests. Listening on port 443...');
-
+module.exports = server;
