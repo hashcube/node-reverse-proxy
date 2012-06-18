@@ -22,7 +22,7 @@ for(i in config.ports) {
   }
 
   var server = require(protocol).createServer(options).listen(config.ports[i]);
-  srv.push(up(server, __dirname + '/rproxy', {workerTimeout: '10s', numWorkers: 1}));
+  srv.push(up(server, __dirname + '/rproxy'));
 }
 
 process.on('SIGUSR2', function () {
