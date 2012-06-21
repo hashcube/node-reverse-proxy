@@ -5,7 +5,7 @@ var fs = require('fs')
 , Config = require('./utils');
 
 
-var config_file = "/Users/emacsian/work/hashcube/tools/rproxy/config.json";
+var config_file = "/Users/rampr/work/hashcube/tools/rproxy/config.json";
 var backends = {};
 var config = new Config().get(config_file);
 var server = http.createServer();

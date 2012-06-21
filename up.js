@@ -2,7 +2,7 @@ var up = require('up')
 , fs = require('fs')
 , Config = require('./utils');
 
-var config_file = "/Users/emacsian/work/hashcube/tools/rproxy/up_config.json";
+var config_file = "/Users/rampr/work/hashcube/tools/rproxy/up_config.json";
 var srv = new Array();
 var config;
 
@@ -25,7 +25,7 @@ for(i in config.ports) {
   srv.push(up(server, __dirname + '/rproxy'));
 }
 
-process.on('SIGUSR2', function () {
+process.on('SIGHUP', function () {
   for(i in srv) {
     srv[i].reload();
   }
