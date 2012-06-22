@@ -5,20 +5,31 @@ var fs = require('fs')
 , Config = require('./utils');
 
 
-var config_file = "/Users/rampr/work/hashcube/tools/rproxy/config.json";
+var config_file = "/home/hashcube/server/www/tools/rproxy/config.json";
 var backends = {};
 var config = new Config().get(config_file);
 var server = http.createServer();
 
 /* Load and parse Config file */
 function loadConfig() {
-
   // Parsing and setting up backends from the config file
   for(i in config.backends) {
-    var target = {};
-    target.host = config.backends[i].host;
-    target.port = config.backends[i].port;
-    backends[i] = new httpProxy.HttpProxy({target: target});
+    backends[i] = new httpProxy.HttpProxy({
+      target: {
+        host : config.backends[i].host,
+        port : config.backends[i].port
+      }
+    });
+    // Catch proxy errors and send 500
+    backends[i].on('proxyError', function(err, req, res) {
+      console.log(err);
+      if(err.code == 'ECONNREFUSED') {
+        console.log('Unable to proxy to target server. This probably means the target server '+
+                    'is not listening on the given port or host');
+      }
+      res.writeHead(500, {'Content-type': 'text/html'});
+      res.end('<h3> Internal Server Error </h3> Well this is embarrassing. Please try again.');
+    });
   }
 }
 
