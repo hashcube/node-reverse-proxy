@@ -1,12 +1,12 @@
 var up = require('up')
 , fs = require('fs')
-, Config = require('./utils');
+, utils = require('./utils');
 
 var config_file = "/home/hashcube/server/www/tools/rproxy/up_config.json";
 var srv = new Array();
 var config;
 
-config = new Config().get(config_file);
+config = new utils.Config().get(config_file);
 
 for(i in config.ports) {
 
