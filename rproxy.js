@@ -23,9 +23,9 @@ function loadConfig() {
     });
     // Catch proxy errors and send 500
     backends[i].on('proxyError', function(err, req, res) {
-      console.log(err);
+      console.error(err);
       if(err.code == 'ECONNREFUSED') {
-        console.log('Unable to proxy to target server. This probably means the target server '+
+        console.error('Unable to proxy to target server. This probably means the target server '+
                     'is not listening on the given port or host');
       }
       res.writeHead(500, {'Content-type': 'text/html'});
@@ -64,6 +64,17 @@ var setupServer = function (server) {
     //console.log(req.url, ' proxying to ', config.onUpgrade);
     log_data.logUpgradeData(req, config.onUpgrade);
     backends[config.onUpgrade].proxyWebSocketRequest(req, socket, head);
+  });
+
+  // Error Handling
+  server.on('uncaughtException', function(err) {
+    console.error('uncaughtException: ', err.message);
+    console.error(err.stack);
+  });
+
+  server.on('error', function(err) {
+    console.error('Server encountered error: ', err.message);
+    console.error(err.stack);
   });
 };
 
