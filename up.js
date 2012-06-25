@@ -2,7 +2,7 @@ var up = require('up')
 , fs = require('fs')
 , utils = require('./utils');
 
-var config_file = "/home/hashcube/server/www/tools/rproxy/up_config.json";
+var config_file = "/Users/rampr/work/hashcube/tools/rproxy/up_config.json";
 var srv = new Array();
 var config;
 

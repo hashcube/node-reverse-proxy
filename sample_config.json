@@ -1,7 +1,4 @@
 {
-  "SSL_PRIVATE_KEY" : "/path/to/your/ssl/private/key",
-  "SSL_CERT" : "/path/to/your/ssl/certificate",
-
   "backends" : {
     "default_backend": {
       "host": "hostname",
@@ -9,8 +6,7 @@
     },
     "some_other_backend": {
       "host": "hostname",
-      "port": "port no, as number",
-      "https": "true | false"
+      "port": "port no, as number"
     }
   },
 

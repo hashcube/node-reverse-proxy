@@ -5,7 +5,7 @@ var fs = require('fs')
 , utils = require('./utils');
 
 
-var config_file = "/home/hashcube/server/www/tools/rproxy/config.json";
+var config_file = "/Users/rampr/work/hashcube/tools/rproxy/config.json";
 var backends = {};
 var config = new utils.Config().get(config_file);
 var log_data = new utils.LogData();
@@ -40,19 +40,13 @@ var setupServer = function (server) {
     var matched = false;
     for(i in config.router) {
       if(req.url.match(i)) {
-        //console.log(req.headers);
         log_data.logProxyData(req, config.router[i]);
-        //console.log(req.url, ' proxying to ', config.router[i]);
         backends[config.router[i]].proxyRequest(req, res);
         matched = true;
         break;
       }
     }
     if(!matched) {
-      //console.log(req.headers);
-      //console.log(req.url);
-      //console.log(req.url, ' proxying to default backend');
-      //console.log('x-forwarded',req.headers['x-forwarded-proto']);
       log_data.logProxyData(req, 'default backend');
       backends.default_backend.proxyRequest(req, res);
     }
@@ -60,8 +54,6 @@ var setupServer = function (server) {
 
   server.on('upgrade', function(req, socket, head) {
     console.log('UPGRADING HEADER FOUND!');
-    //console.log(req.headers);
-    //console.log(req.url, ' proxying to ', config.onUpgrade);
     log_data.logUpgradeData(req, config.onUpgrade);
     backends[config.onUpgrade].proxyWebSocketRequest(req, socket, head);
   });
