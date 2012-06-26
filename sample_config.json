@@ -1,18 +1,21 @@
 {
-  "backends" : {
-    "default_backend": {
-      "host": "hostname",
-      "port": "port no, as number not string"
+  "SSL_PRIVATE_KEY" : "/Users/rampr/ssl/star.hashcube.com_ssl/ssl.key",
+    "SSL_CERT" : "/Users/rampr/ssl/star.hashcube.com_ssl/ssl.cert",
+
+    "backends" : {
+      "default_backend": {
+        "host": "localhost",
+        "port": 81
+      },
+      "nodejs": {
+        "host": "localhost",
+        "port": 8080
+      }
     },
-    "some_other_backend": {
-      "host": "hostname",
-      "port": "port no, as number"
-    }
-  },
 
-  "router" : {
-    "/some_url/" : "one_of_the_backends"
-  },            
+    "router" : {
+      "/socket.io/" : "nodejs"
+    },
 
-  "onUpgrade": "one_of_the_backends"
+    "onUpgrade" : "nodejs"
 }
