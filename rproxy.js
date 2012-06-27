@@ -105,3 +105,7 @@ setupServer(server);
 setupServer(https_server);
 server.listen(80);
 https_server.listen(443);
+
+process.on('uncaughtException', function (err) {
+    console.error('Caught uncaught exception: ' + err);
+});
